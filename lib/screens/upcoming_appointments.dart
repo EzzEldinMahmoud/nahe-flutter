@@ -105,11 +105,10 @@ class _appointmentpageState extends State<appointmentpage> {
                   height: MediaQuery.of(context).size.height * 0.5,
                   width: MediaQuery.of(context).size.width * 1,
                   child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
                     itemCount: appointmentmodelUP.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.15,
+                          height: MediaQuery.of(context).size.height * 0.16,
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -155,6 +154,13 @@ class _appointmentpageState extends State<appointmentpage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Text(
+                                            appointmentmodelUP[index].status,
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.left,
+                                          ),
                                           Text(
                                             appointmentmodelUP[index]
                                                 .agent
@@ -282,7 +288,7 @@ class _appointmentpageState extends State<appointmentpage> {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 1,
                   width: MediaQuery.of(context).size.width * 1,
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
@@ -335,6 +341,13 @@ class _appointmentpageState extends State<appointmentpage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Text(
+                                            appointmentmodelARC[index].status,
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.left,
+                                          ),
                                           Text(
                                             appointmentmodelARC[index]
                                                 .agent

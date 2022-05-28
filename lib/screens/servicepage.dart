@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_color/flutter_color.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:project/models/serviceModel.dart';
 import 'package:project/screens/cubit.dart';
 import 'package:project/screens/nearby_service.dart';
+import 'package:project/screens/searchpage.dart';
 import 'package:project/screens/settings.dart';
 import 'package:project/screens/states/loginstates.dart';
 import 'package:project/screens/upcoming_appointments.dart';
+
+import '../network/remote/local/cachehelper.dart';
+import 'constants.dart';
 
 class serviceScreen extends StatefulWidget {
   serviceScreen({Key? key}) : super(key: key);
@@ -18,8 +24,10 @@ class serviceScreen extends StatefulWidget {
 }
 
 class _serviceScreenState extends State<serviceScreen> {
-  late Servicemodel? here;
+  Servicemodel? here;
   String Baseurl = 'http://nahe.dhulfiqar.com';
+  bool _show = false;
+  final _gKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -29,8 +37,10 @@ class _serviceScreenState extends State<serviceScreen> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: BlocProvider(
-      create: (BuildContext context) =>
-          appcubit(appserviceinitialstate())..getservice(),
+      create: (BuildContext context) => appcubit(appserviceinitialstate())
+        ..getservice()
+        ..getuserdata()
+        ..GETNEARBYSERVICEPROVIDER(),
       child: BlocConsumer<appcubit, appstate>(
         listener: (context, state) {
           if (state is appservicestatesuccess) {
@@ -86,6 +96,11 @@ class _serviceScreenState extends State<serviceScreen> {
                 ],
               ),
               child: TextField(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return searchpage();
+                  }));
+                },
                 decoration: InputDecoration(
                   filled: true,
                   isDense: true, // Added this
@@ -147,128 +162,84 @@ class _serviceScreenState extends State<serviceScreen> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 0),
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    margin: EdgeInsets.all(4),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Color(0xffffEEF6F6),
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      padding: EdgeInsets.all(15),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            height: 100,
-                                            width: 100,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                image: new DecorationImage(
-                                                  image: new NetworkImage(
-                                                      Baseurl +
-                                                          here!
-                                                              .data
-                                                              .nearbyAgents[
-                                                                  index]
-                                                              .photo),
-                                                  fit: BoxFit.cover,
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                            height: 10,
-                                          ),
-                                          Container(
-                                              child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                here!.data.nearbyAgents[index]
-                                                    .name,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                here!.data.nearbyAgents[index]
-                                                    .occupation.title,
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                              Expanded(
-                                                child: Text(""),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.03,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.25,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.transparent,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15)),
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Text(
-                                                          here!
-                                                              .data
-                                                              .nearbyAgents[
-                                                                  index]
-                                                              .rating,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black),
-                                                        ),
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors.yellow,
-                                                          size: 17,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.03,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  NearbyServicePage()));
-                                                    },
-                                                    child: Container(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    int id = here!.data.nearbyAgents[index].id;
+                                    StorageUtil.putString('id', id.toString());
+                                    appcubit
+                                        .get(context)
+                                        .GETAGENTDATADETAILS(ID: id);
+                                    showBarModalBottomSheet(
+                                        expand: false,
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        builder: (context) => bottomsheet());
+                                  },
+                                  child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      margin: EdgeInsets.all(4),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Color(0xffffEEF6F6),
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        padding: EdgeInsets.all(15),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 100,
+                                              width: 100,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  image: new DecorationImage(
+                                                    image: new NetworkImage(
+                                                        Baseurl +
+                                                            here!
+                                                                .data
+                                                                .nearbyAgents[
+                                                                    index]
+                                                                .photo),
+                                                    fit: BoxFit.cover,
+                                                  )),
+                                            ),
+                                            SizedBox(
+                                              width: 15,
+                                              height: 10,
+                                            ),
+                                            Container(
+                                                child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  here!.data.nearbyAgents[index]
+                                                      .name,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  here!.data.nearbyAgents[index]
+                                                      .occupation.title,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                Expanded(
+                                                  child: Text(""),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
@@ -278,7 +249,7 @@ class _serviceScreenState extends State<serviceScreen> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.2,
+                                                              0.25,
                                                       decoration: BoxDecoration(
                                                           color: Colors
                                                               .transparent,
@@ -288,32 +259,94 @@ class _serviceScreenState extends State<serviceScreen> {
                                                                       15)),
                                                       child: Row(
                                                         children: [
-                                                          Expanded(
-                                                            child: Text(''),
+                                                          SizedBox(
+                                                            width: 10,
                                                           ),
                                                           Text(
-                                                            " Details",
+                                                            here!
+                                                                .data
+                                                                .nearbyAgents[
+                                                                    index]
+                                                                .rating,
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .black),
                                                           ),
                                                           Icon(
-                                                            Icons
-                                                                .arrow_forward_sharp,
-                                                            color: Colors.black,
+                                                            Icons.star,
+                                                            color:
+                                                                Colors.yellow,
                                                             size: 17,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ))
-                                        ],
-                                      ),
-                                    )),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (_) =>
+                                                                    NearbyServicePage()));
+                                                      },
+                                                      child: Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.03,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .transparent,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15)),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(''),
+                                                            ),
+                                                            Text(
+                                                              " Details",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_sharp,
+                                                              color:
+                                                                  Colors.black,
+                                                              size: 17,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ))
+                                          ],
+                                        ),
+                                      )),
+                                ),
                               ));
                         },
                       ),
@@ -322,172 +355,55 @@ class _serviceScreenState extends State<serviceScreen> {
                 );
               },
             ),
-            Container(
-              height: MediaQuery.of(context).size.height * 1,
-              width: MediaQuery.of(context).size.width * 1,
-              child: GridView.count(
-                  primary: false,
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 15,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffff9FAEC5),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/technician.png",
-                              height: 50,
-                              width: 50,
+            ConditionalBuilder(
+              builder: ((context) => Container(
+                    height: MediaQuery.of(context).size.height * 0.42,
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: GridView.count(
+                        primary: false,
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 15,
+                        crossAxisSpacing: 15,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 5),
+                        children:
+                            List.generate(here!.data.catalogue.length, (index) {
+                          return GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: HexColor(
+                                    here!.data.catalogue[index].colour),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.network(
+                                    "${Baseurl + here!.data.catalogue[index].icon}",
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Text(
+                                    here!.data.catalogue[index].title,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Technician",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffff9FAEC5),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/technician.png",
-                              height: 50,
-                              width: 50,
-                            ),
-                            Text(
-                              "Technician",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffffFAAD93),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/carpenter.png",
-                              height: 50,
-                              width: 50,
-                            ),
-                            Text(
-                              "Carpenter",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffff97B1D0),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/plumber.png",
-                              height: 50,
-                              width: 50,
-                            ),
-                            Text(
-                              "Plumber",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffffB7C798),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/mechanic.png",
-                              height: 50,
-                              width: 50,
-                            ),
-                            Text(
-                              "Mechanic",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffffB7C798),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/mechanic.png",
-                              height: 50,
-                              width: 50,
-                            ),
-                            Text(
-                              "Mechanic",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
-            ),
+                          );
+                        })),
+                  )),
+              condition: state is! appservicedetailloadingstate,
+              fallback: (BuildContext context) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            )
           ])));
         },
       ),

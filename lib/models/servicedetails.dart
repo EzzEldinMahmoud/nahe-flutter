@@ -51,7 +51,7 @@ class Provider {
   late final String name;
   late final String photo;
   late final Occupation occupation;
-  late final int rating;
+  late final String rating;
   late final String address;
   late final String phoneNumber;
 

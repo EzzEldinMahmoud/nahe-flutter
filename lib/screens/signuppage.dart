@@ -54,7 +54,7 @@ class _signup_formState extends State<signup_form> {
 
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => applogincubit(AppLoginInitialState()),
+        create: (BuildContext context) => appcubit(appregisterstate()),
         child: BlocConsumer<appcubit, appstate>(listener: (context, state) {
           if (state is appsuccessstateregister) {
             if (state.userdata.data.token.authToken != null) {
@@ -85,12 +85,9 @@ class _signup_formState extends State<signup_form> {
                             height: MediaQuery.of(context).size.height * 0.2,
                             child: Column(
                               children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.1,
-                                ),
+                                Expanded(child: Text('')),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(8.0),
                                   child: Align(
                                       alignment: Alignment.bottomLeft,
                                       child: Text(
@@ -265,12 +262,14 @@ class _signup_formState extends State<signup_form> {
                                       },
                                       child: Container(
                                         child: TextFormField(
-                                          onTap: () {
-                                            Navigator.push(
+                                          onTap: () async {
+                                            result = await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (_) =>
                                                         localmap()));
+                                            location.text =
+                                                '${result.street}${result.district}${result.city}';
                                           },
                                           controller: location,
                                           keyboardType: TextInputType.text,
@@ -387,7 +386,7 @@ class _signup_formState extends State<signup_form> {
                                         minWidth:
                                             MediaQuery.of(context).size.width *
                                                 0.8,
-                                        onPressed: () {
+                                        onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
                                             appcubit.get(Context).userregister(
@@ -426,9 +425,6 @@ class _signup_formState extends State<signup_form> {
                                         return Center(
                                             child: CircularProgressIndicator());
                                       },
-                                    ),
-                                    SizedBox(
-                                      height: 15,
                                     ),
                                     TextButton(
                                         onPressed: () {

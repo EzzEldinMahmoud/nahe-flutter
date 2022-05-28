@@ -85,15 +85,18 @@ class Occupation {
     required this.id,
     required this.title,
     required this.icon,
+    required this.colour,
   });
   late final int id;
   late final String title;
   late final String icon;
+  late final String colour;
 
   Occupation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     icon = json['icon'];
+    colour = json['colour'];
   }
 
   Map<String, dynamic> toJson() {
@@ -101,6 +104,7 @@ class Occupation {
     _data['id'] = id;
     _data['title'] = title;
     _data['icon'] = icon;
+    _data['colour'] = colour;
     return _data;
   }
 }
@@ -110,15 +114,18 @@ class Catalogue {
     required this.id,
     required this.title,
     required this.icon,
+    required this.colour,
   });
   late final int id;
   late final String title;
   late final String icon;
+  late final String colour;
 
   Catalogue.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     icon = json['icon'];
+    colour = json['colour'];
   }
 
   Map<String, dynamic> toJson() {
@@ -126,6 +133,7 @@ class Catalogue {
     _data['id'] = id;
     _data['title'] = title;
     _data['icon'] = icon;
+    _data['colour'] = colour;
     return _data;
   }
 }

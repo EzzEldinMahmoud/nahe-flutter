@@ -1,7 +1,6 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_search/mapbox_search.dart';
 import 'package:project/models/user_info.dart';
 import 'package:project/network/remote/local/cachehelper.dart';
 import 'package:project/screens/constants.dart';
@@ -42,257 +41,227 @@ class _settingsScreenState extends State<settingsScreen> {
           return ConditionalBuilder(
             builder: ((context) => Material(
                     child: SingleChildScrollView(
-                  child: Column(children: [
-                    Container(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(children: [
-                          const Padding(
-                            padding: EdgeInsets.only(
-                                top: 40, left: 20, right: 20, bottom: 10),
-                            child: Text(
-                              "Profile",
-                              style: TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 1,
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: Column(children: [
+                      Container(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 40, left: 20, right: 20, bottom: 10),
+                              child: Text(
+                                "Profile",
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          const Expanded(
-                            child: Text(""),
-                          ),
-                          const Padding(
-                              padding:
-                                  EdgeInsets.only(top: 31, left: 20, right: 20),
-                              child: CircleAvatar(
-                                  radius: 19,
-                                  backgroundColor: Colors.teal,
-                                  child: CircleAvatar(
-                                    backgroundColor:
-                                        Color.fromRGBO(187, 250, 231, 1),
-                                    backgroundImage: AssetImage(
-                                        'assets\images\iconperson.png'),
-                                    radius: 17,
-                                  ))),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ])),
-                    Form(
-                        key: _formKey,
-                        child: ConditionalBuilder(
-                          condition: state is! AppsettingLoadingState,
-                          fallback: (BuildContext context) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                  color: Colors.green),
-                            );
-                          },
-                          builder: (BuildContext context) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, left: 30, right: 30),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          " Name ",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black),
-                                        ),
-                                        const SizedBox(height: 13),
-                                        TextFormField(
-                                          controller: name,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            isDense: true, // Added this
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 25,
-                                                    horizontal: 10),
-                                            fillColor: Color.fromRGBO(
-                                                238, 247, 246, 1),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 2),
-                                            ),
-
-                                            hintText: '',
+                            const Expanded(
+                              child: Text(""),
+                            ),
+                            const Padding(
+                                padding: EdgeInsets.only(
+                                    top: 31, left: 20, right: 20),
+                                child: CircleAvatar(
+                                    radius: 19,
+                                    backgroundColor: Colors.teal,
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Color.fromRGBO(187, 250, 231, 1),
+                                      backgroundImage: AssetImage(
+                                          'assets\images\iconperson.png'),
+                                      radius: 17,
+                                    ))),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ])),
+                      Form(
+                          key: _formKey,
+                          child: ConditionalBuilder(
+                            condition: state is! AppsettingLoadingState,
+                            fallback: (BuildContext context) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                    color: Colors.green),
+                              );
+                            },
+                            builder: (BuildContext context) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, left: 30, right: 30),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            " Name ",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        const Text(
-                                          " Address ",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black),
-                                        ),
-                                        const SizedBox(height: 13),
-                                        TextFormField(
-                                          controller: address,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            isDense: true, // Added this
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 25,
-                                                    horizontal: 10),
-                                            fillColor: Color.fromRGBO(
-                                                238, 247, 246, 1),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 2),
-                                            ),
-
-                                            hintText: '',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        const Text(
-                                          " Phone Number ",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black),
-                                        ),
-                                        const SizedBox(height: 13),
-                                        TextFormField(
-                                          controller: phonenumber,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            isDense: true, // Added this
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 25,
-                                                    horizontal: 10),
-                                            fillColor: Color.fromRGBO(
-                                                238, 247, 246, 1),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12.0)),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 2),
-                                            ),
-
-                                            hintText: '',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        const SizedBox(height: 20),
-                                        Container(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 25),
-                                            child: FlatButton(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.07,
-                                              minWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              onPressed: () {
-                                                List values = address.text.split(
-                                                    ","); // split() will split from . and gives new List with separated elements.
-                                                values.forEach(print);
-                                                appcubit
-                                                    .get(context)
-                                                    .userinfoupdate(
-                                                        phone_number:
-                                                            phonenumber.text,
-                                                        name: name.text,
-                                                        street: values[0],
-                                                        district: values[1],
-                                                        city: values[2],
-                                                        Token: StorageUtil
-                                                            .getString(
-                                                                'token'));
-                                                print(appcubit
-                                                    .get(context)
-                                                    .userget
-                                                    .data
-                                                    .user
-                                                    .name);
-                                                setState(() {
-                                                  var userinfohere = appcubit
-                                                      .get(context)
-                                                      .usermodel
-                                                      .data
-                                                      .user;
-                                                  name.text = userinfohere.name;
-                                                  address.text =
-                                                      userinfohere.address;
-                                                  phonenumber.text =
-                                                      userinfohere.phoneNumber;
-                                                });
-                                              },
-                                              color: const Color.fromRGBO(
-                                                  0, 168, 165, 1),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: const Text(
-                                                "Update",
-                                                style: TextStyle(
+                                          const SizedBox(height: 13),
+                                          TextFormField(
+                                            controller: name,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true, // Added this
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 25,
+                                                      horizontal: 10),
+                                              fillColor: Color.fromRGBO(
+                                                  238, 247, 246, 1),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12.0)),
+                                                borderSide: BorderSide(
                                                     color: Colors.white,
-                                                    fontSize: 19),
+                                                    width: 2),
                                               ),
-                                            )),
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.2,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: FlatButton(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.06,
-                                            minWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.9,
-                                            onPressed: () {
-                                              signout(context);
-                                            },
-                                            color: const Color.fromARGB(
-                                                190, 168, 7, 1),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: const Text(
-                                              "Logout",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 19),
+
+                                              hintText: '',
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        )
-                                      ],
-                                    ))
-                              ],
-                            );
+                                          const SizedBox(height: 20),
+                                          const Text(
+                                            " Address ",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black),
+                                          ),
+                                          const SizedBox(height: 13),
+                                          TextFormField(
+                                            controller: address,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true, // Added this
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 25,
+                                                      horizontal: 10),
+                                              fillColor: Color.fromRGBO(
+                                                  238, 247, 246, 1),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.white,
+                                                    width: 2),
+                                              ),
+
+                                              hintText: '',
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          const Text(
+                                            " Phone Number ",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black),
+                                          ),
+                                          const SizedBox(height: 13),
+                                          TextFormField(
+                                            controller: phonenumber,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true, // Added this
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 25,
+                                                      horizontal: 10),
+                                              fillColor: Color.fromRGBO(
+                                                  238, 247, 246, 1),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.white,
+                                                    width: 2),
+                                              ),
+
+                                              hintText: '',
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          )
+                                        ],
+                                      ))
+                                ],
+                              );
+                            },
+                          )),
+                      Expanded(child: Text("")),
+                      Container(
+                          alignment: Alignment.bottomCenter,
+                          padding: const EdgeInsets.only(bottom: 25),
+                          child: FlatButton(
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            minWidth: MediaQuery.of(context).size.width * 0.9,
+                            onPressed: () {
+                              List values = address.text.split(
+                                  ","); // split() will split from . and gives new List with separated elements.
+                              values.forEach(print);
+                              appcubit.get(context).userinfoupdate(
+                                  phone_number: phonenumber.text,
+                                  name: name.text,
+                                  street: values[0],
+                                  district: values[1],
+                                  city: values[2],
+                                  Token: StorageUtil.getString('token'));
+                              print(appcubit
+                                  .get(context)
+                                  .userget!
+                                  .data
+                                  .user
+                                  .name);
+                              setState(() {
+                                var userinfohere =
+                                    appcubit.get(context).usermodel!.data.user;
+                                name.text = userinfohere.name;
+                                address.text = userinfohere.address;
+                                phonenumber.text = userinfohere.phoneNumber;
+                              });
+                            },
+                            color: const Color.fromRGBO(0, 168, 165, 1),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: const Text(
+                              "Update",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 19),
+                            ),
+                          )),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FlatButton(
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          minWidth: MediaQuery.of(context).size.width * 0.9,
+                          onPressed: () {
+                            signout(context);
                           },
-                        ))
-                  ]),
+                          color: const Color.fromARGB(190, 168, 7, 1),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.white, fontSize: 19),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      )
+                    ]),
+                  ),
                 ))),
             condition: state is! apploadingstate,
             fallback: (BuildContext context) {

@@ -49,9 +49,15 @@ dependencies:
   android_intent:
   conditional_builder_null_safety: ^0.0.6
   shared_preferences: ^2.0.15
-  mapbox_search: 
   search_map_location: ^0.0.5
+  modal_bottom_sheet: ^2.0.1
+  auto_size_text: ^3.0.0
+  flutter_datetime_picker: ^1.5.1
+  colours: ^0.0.2
+  flutter_color: ^2.0.0
   
+
+   
 
   
   

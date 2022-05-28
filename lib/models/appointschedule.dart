@@ -1,10 +1,10 @@
-class HOMEMODEL {
-  HOMEMODEL({
+class ScheduleAPPOINTMENTMODEL {
+  ScheduleAPPOINTMENTMODEL({
     required this.data,
   });
   late final Data data;
 
-  HOMEMODEL.fromJson(Map<String, dynamic> json) {
+  ScheduleAPPOINTMENTMODEL.fromJson(Map<String, dynamic> json) {
     data = Data.fromJson(json['data']);
   }
 
@@ -17,93 +17,23 @@ class HOMEMODEL {
 
 class Data {
   Data({
-    required this.user,
-    required this.services,
-    required this.upcomingAppointments,
+    required this.appointment,
   });
-  late final User user;
-  late final List<Services> services;
-  late final List<UpcomingAppointments> upcomingAppointments;
+  late final Appointment appointment;
 
   Data.fromJson(Map<String, dynamic> json) {
-    user = User.fromJson(json['user']);
-    services =
-        List.from(json['services']).map((e) => Services.fromJson(e)).toList();
-    upcomingAppointments = List.from(json['upcoming_appointments'])
-        .map((e) => UpcomingAppointments.fromJson(e))
-        .toList();
+    appointment = Appointment.fromJson(json['appointment']);
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['user'] = user.toJson();
-    _data['services'] = services.map((e) => e.toJson()).toList();
-    _data['upcoming_appointments'] =
-        upcomingAppointments.map((e) => e.toJson()).toList();
+    _data['appointment'] = appointment.toJson();
     return _data;
   }
 }
 
-class User {
-  User({
-    required this.phoneNumber,
-    required this.name,
-    required this.photo,
-    required this.address,
-  });
-  late final String phoneNumber;
-  late final String name;
-  late final String photo;
-  late final String address;
-
-  User.fromJson(Map<String, dynamic> json) {
-    phoneNumber = json['phone_number'];
-    name = json['name'];
-    photo = json['photo'];
-    address = json['address'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['phone_number'] = phoneNumber;
-    _data['name'] = name;
-    _data['photo'] = photo;
-    _data['address'] = address;
-    return _data;
-  }
-}
-
-class Services {
-  Services({
-    required this.id,
-    required this.title,
-    required this.icon,
-    required this.colour,
-  });
-  late final int id;
-  late final String title;
-  late final String icon;
-  late final String colour;
-
-  Services.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title'];
-    icon = json['icon'];
-    colour = json['colour'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['title'] = title;
-    _data['icon'] = icon;
-    _data['colour'] = colour;
-    return _data;
-  }
-}
-
-class UpcomingAppointments {
-  UpcomingAppointments({
+class Appointment {
+  Appointment({
     required this.id,
     required this.date,
     required this.time,
@@ -118,7 +48,7 @@ class UpcomingAppointments {
   late final Agent agent;
   late final String status;
 
-  UpcomingAppointments.fromJson(Map<String, dynamic> json) {
+  Appointment.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     date = json['date'];
     time = json['time'];

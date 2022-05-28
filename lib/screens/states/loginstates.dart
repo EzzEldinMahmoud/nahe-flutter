@@ -7,6 +7,9 @@ import 'package:project/models/registermodel.dart';
 import 'package:project/models/serviceModel.dart';
 import 'package:project/models/user_info.dart';
 
+import '../../models/SEARCHAGENTMODEL.dart';
+import '../../models/appointschedule.dart';
+
 abstract class appstate {}
 
 class appinitialstate extends appstate {}
@@ -26,12 +29,46 @@ class appERRORstate extends appstate {
   appERRORstate(this.error);
 }
 
+class appsearchinitialstate extends appstate {}
+
+class appsearchloadingstate extends appstate {}
+
+class appsearchsuccessstate extends appstate {
+  final SEARCHAGENTSNEARBY userdata;
+
+  appsearchsuccessstate(
+    this.userdata,
+  );
+}
+
+class appsearchERRORstate extends appstate {
+  final String error;
+  appsearchERRORstate(this.error);
+}
+
+class appscheduleinitialstate extends appstate {}
+
+class appscheduleloadingstate extends appstate {}
+
+class appschedulesuccessstate extends appstate {
+  final ScheduleAPPOINTMENTMODEL userdata;
+
+  appschedulesuccessstate(
+    this.userdata,
+  );
+}
+
+class appscheduleERRORstate extends appstate {
+  final String error;
+  appscheduleERRORstate(this.error);
+}
+
 class appservicedetailsinitialstate extends appstate {}
 
 class appservicedetailloadingstate extends appstate {}
 
 class appservicedetailsuccessstate extends appstate {
-  final GETAGENTDETAILS userdata;
+  final AgentdetailModel userdata;
 
   appservicedetailsuccessstate(
     this.userdata,
@@ -133,8 +170,8 @@ class appuserintialstate extends appstate {}
 class appuserloadingstate extends appstate {}
 
 class appusersuccessstate extends appstate {
-  late final Loginmodel userdata;
-  late final Loginmodel token;
+  final Loginmodel? userdata;
+  final Loginmodel? token;
   appusersuccessstate(this.userdata, this.token);
 }
 
@@ -143,12 +180,12 @@ class appuserERRORstate extends appstate {}
 class AppsettingInitialState extends appstate {}
 
 class AppsettingSuccessState extends appstate {
-  late final userinfo loginmodel;
+  final userinfo? loginmodel;
   AppsettingSuccessState(this.loginmodel);
 }
 
 class AppsettingFailedState extends appstate {
-  late final error;
+  final error;
   AppsettingFailedState(this.error);
 }
 
@@ -156,16 +193,16 @@ class AppsettingLoadingState extends appstate {}
 
 abstract class apploginstate {}
 
-class AppLoginInitialState extends apploginstate {}
+class AppLoginInitialState extends appstate {}
 
-class AppLoginSuccessState extends apploginstate {
+class AppLoginSuccessState extends appstate {
   final Loginmodel userdata;
   AppLoginSuccessState(this.userdata, Future<bool> token);
 }
 
-class AppLoginFailedState extends apploginstate {
+class AppLoginFailedState extends appstate {
   final String error;
   AppLoginFailedState(this.error);
 }
 
-class AppLoginLoadingState extends apploginstate {}
+class AppLoginLoadingState extends appstate {}

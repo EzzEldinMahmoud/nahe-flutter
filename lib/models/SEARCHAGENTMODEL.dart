@@ -1,10 +1,10 @@
-class AgentdetailModel {
-  AgentdetailModel({
+class SEARCHAGENTSNEARBY {
+  SEARCHAGENTSNEARBY({
     required this.data,
   });
   late final Data data;
-
-  AgentdetailModel.fromJson(Map<String, dynamic> json) {
+  
+  SEARCHAGENTSNEARBY.fromJson(Map<String, dynamic> json){
     data = Data.fromJson(json['data']);
   }
 
@@ -17,28 +17,23 @@ class AgentdetailModel {
 
 class Data {
   Data({
-    required this.provider,
-    required this.reviews,
+    required this.providers,
   });
-  late final Provider provider;
-  late final List<Reviews> reviews;
-
-  Data.fromJson(Map<String, dynamic> json) {
-    provider = Provider.fromJson(json['provider']);
-    reviews =
-        List.from(json['reviews']).map((e) => Reviews.fromJson(e)).toList();
+  late final List<Providers> providers;
+  
+  Data.fromJson(Map<String, dynamic> json){
+    providers = List.from(json['providers']).map((e)=>Providers.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['provider'] = provider.toJson();
-    _data['reviews'] = reviews.map((e) => e.toJson()).toList();
+    _data['providers'] = providers.map((e)=>e.toJson()).toList();
     return _data;
   }
 }
 
-class Provider {
-  Provider({
+class Providers {
+  Providers({
     required this.id,
     required this.name,
     required this.photo,
@@ -54,8 +49,8 @@ class Provider {
   late final String rating;
   late final String address;
   late final String phoneNumber;
-
-  Provider.fromJson(Map<String, dynamic> json) {
+  
+  Providers.fromJson(Map<String, dynamic> json){
     id = json['id'];
     name = json['name'];
     photo = json['photo'];
@@ -83,15 +78,18 @@ class Occupation {
     required this.id,
     required this.title,
     required this.icon,
+    required this.colour,
   });
   late final int id;
   late final String title;
   late final String icon;
-
-  Occupation.fromJson(Map<String, dynamic> json) {
+  late final String colour;
+  
+  Occupation.fromJson(Map<String, dynamic> json){
     id = json['id'];
     title = json['title'];
     icon = json['icon'];
+    colour = json['colour'];
   }
 
   Map<String, dynamic> toJson() {
@@ -99,31 +97,7 @@ class Occupation {
     _data['id'] = id;
     _data['title'] = title;
     _data['icon'] = icon;
-    return _data;
-  }
-}
-
-class Reviews {
-  Reviews({
-    required this.comment,
-    required this.rating,
-    required this.clientName,
-  });
-  late final String comment;
-  late final String rating;
-  late final String clientName;
-
-  Reviews.fromJson(Map<String, dynamic> json) {
-    comment = json['comment'];
-    rating = json['rating'];
-    clientName = json['client_name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['comment'] = comment;
-    _data['rating'] = rating;
-    _data['client_name'] = clientName;
+    _data['colour'] = colour;
     return _data;
   }
 }

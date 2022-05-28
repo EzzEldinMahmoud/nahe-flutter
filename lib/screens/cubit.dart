@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_search/mapbox_search.dart';
+import 'package:project/Widgets/schedulewidget.dart';
 import 'package:project/models/AGENTDETAILS.dart';
 import 'package:project/models/LOGIN_model.dart';
 import 'package:project/models/Appointments.dart';
@@ -21,44 +21,51 @@ import 'package:project/screens/sign_page.dart';
 import 'package:project/screens/states/loginstates.dart';
 import 'package:project/screens/states/settingsstates.dart';
 
-var token = StorageUtil.getString('token');
+import '../models/SEARCHAGENTMODEL.dart';
+import '../models/appointschedule.dart';
 
 class appcubit extends Cubit<appstate> {
   appcubit(appstate initialState) : super(initialState);
   static appcubit get(context) => BlocProvider.of(context);
-  late userinfo usermodel;
-  late Loginmodel userget;
+  userinfo? usermodel;
+  Loginmodel? userget;
   HOMEMODEL? homemodel;
   NEARBYSERVICEPROVIDERS? NEARBYSERVICEPROVIDERMODEL;
-  GETAGENTDETAILS? AGENTDETAILSMODEL;
+  AgentdetailModel? AGENTDETAILSMODEL;
 
   Servicemodel? servicemodel;
   APPOINTMENTMODEL? appointmentmodel;
   Future getuserdata() async {
     emit(apploadingstate());
     diohelper
-        .getData(Url: get_user_info, query: {}, Token: token)
+        .getData(
+            Url: get_user_info,
+            query: {},
+            Token: StorageUtil.getString('token'))
         .then((value) {
       diohelper.dio?.options.headers[{
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
       }];
 
       usermodel = userinfo.fromJson(jsonDecode(value?.data));
       if (usermodel != null) {
-        print(usermodel.data.user.phoneNumber.toString());
-        emit(appsuccessstate(usermodel));
+        print(usermodel!.data.user.phoneNumber.toString());
+        emit(appsuccessstate(usermodel!));
       }
     }).catchError((error) {
       print(error.toString());
       emit(appERRORstate(error));
     });
+    return usermodel;
   }
 
   Future gethome() async {
     emit(apphomestateloading());
-    diohelper.getData(Url: GETHOME, query: {}, Token: token).then((value) {
+    diohelper
+        .getData(Url: GETHOME, query: {}, Token: StorageUtil.getString('token'))
+        .then((value) {
       diohelper.dio?.options.headers[{
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
       }];
 
       print(value?.statusCode.toString());
@@ -81,7 +88,10 @@ class appcubit extends Cubit<appstate> {
   Future getappointments() async {
     emit(appappointmentstateloading());
     diohelper
-        .getData(Url: GETAPPOINTMENTS, query: {}, Token: token)
+        .getData(
+            Url: GETAPPOINTMENTS,
+            query: {},
+            Token: StorageUtil.getString('token'))
         .then((value) {
       diohelper.dio?.options.headers[{
         'Authorization': 'Bearer ${token}',
@@ -107,7 +117,10 @@ class appcubit extends Cubit<appstate> {
   Future GETNEARBYSERVICEPROVIDER() async {
     emit(APPSERVICENEARBYPROVIDERSLOADINGSTATE());
     diohelper
-        .getData(Url: GETNEARBYSERVICEPROVIDERS, query: {}, Token: token)
+        .getData(
+            Url: GETNEARBYSERVICEPROVIDERS,
+            query: {},
+            Token: StorageUtil.getString('token'))
         .then((value) {
       diohelper.dio?.options.headers[{
         'Authorization': 'Bearer ${token}',
@@ -132,20 +145,24 @@ class appcubit extends Cubit<appstate> {
     return NEARBYSERVICEPROVIDERMODEL;
   }
 
-  Future GETAGENTDATADETAILS() async {
+  Future GETAGENTDATADETAILS({required int ID}) async {
     emit(appservicedetailloadingstate());
     diohelper
-        .getData(Url: getservicedetails, query: {}, Token: token)
+        .postData(
+            Url: getservicedetails,
+            query: {},
+            Token: StorageUtil.getString('token'),
+            data: {'agent_id': ID})
         .then((value) {
       diohelper.dio?.options.headers[{
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
       }];
 
       print(value?.statusCode.toString());
       print(value?.data);
       print(value?.statusCode);
       print(value?.statusCode);
-      AGENTDETAILSMODEL = GETAGENTDETAILS.fromJson(jsonDecode(value?.data));
+      AGENTDETAILSMODEL = AgentdetailModel.fromJson(jsonDecode(value?.data));
 
       if (AGENTDETAILSMODEL != null) {
         print(AGENTDETAILSMODEL!.data.reviews.length);
@@ -158,11 +175,44 @@ class appcubit extends Cubit<appstate> {
     return AGENTDETAILSMODEL;
   }
 
+  Future getsearchresult({required String jobtitle}) async {
+    emit(appsearchloadingstate());
+    diohelper
+        .postData(
+            Url: SEARCHPAGERESULT,
+            query: {},
+            Token: StorageUtil.getString('token'),
+            data: {'query': jobtitle})
+        .then((value) {
+      diohelper.dio?.options.headers[{
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
+      }];
+
+      print(value?.statusCode.toString());
+      print(value?.data);
+      print(value?.statusCode);
+      print(value?.statusCode);
+      final SEARCHAGENTDETAILSMODEL =
+          SEARCHAGENTSNEARBY.fromJson(jsonDecode(value?.data));
+
+      if (SEARCHAGENTDETAILSMODEL != null) {
+        print(SEARCHAGENTDETAILSMODEL.data);
+        emit(appsearchsuccessstate(SEARCHAGENTDETAILSMODEL));
+      }
+    }).catchError((error) {
+      print(jsonDecode(error.toString()));
+      emit(appsearchERRORstate(jsonDecode(error.toString())));
+    });
+  }
+
   Future getservice() async {
     emit(appserviceloadingstate());
-    diohelper.getData(Url: GETSERVICE, query: {}, Token: token).then((value) {
+    diohelper
+        .getData(
+            Url: GETSERVICE, query: {}, Token: StorageUtil.getString('token'))
+        .then((value) {
       diohelper.dio?.options.headers[{
-        'Authorization': 'Bearer ${token}',
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
       }];
 
       print(value?.statusCode.toString());
@@ -199,7 +249,7 @@ class appcubit extends Cubit<appstate> {
       'street': street,
     }).then((value) {
       diohelper.dio?.options.headers[{
-        'Authorization': 'Bearer ${Token}',
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
       }];
       final userdata = userinfo.fromJson(jsonDecode(value?.data));
 
@@ -214,6 +264,41 @@ class appcubit extends Cubit<appstate> {
     }).catchError((error) {
       print(error.toString());
       emit(appERRORstate(error.toString()));
+    });
+  }
+
+  Future<void> scheduleappointment(
+      {required int agent_id,
+      required String date,
+      required String time,
+      required String payment_method,
+      required String details,
+      required Token}) async {
+    emit(appscheduleloadingstate());
+    diohelper.postData(Url: SCHEDULEAPPOINTMENT, data: {
+      'agent_id': agent_id,
+      'date': date,
+      'time': time,
+      'payment_method': payment_method,
+      'details': details,
+    }).then((value) {
+      diohelper.dio?.options.headers[{
+        'Authorization': 'Bearer ${StorageUtil.getString('token')}',
+      }];
+      final scheduleAppointmentmodel =
+          ScheduleAPPOINTMENTMODEL.fromJson(jsonDecode(value?.data));
+
+      final apimodeluse1 = scheduleAppointmentmodel.data.appointment;
+
+      if (apimodeluse1 != null) {
+        print(apimodeluse1.date);
+      } else {
+        print("failed to update");
+      }
+      emit(appschedulesuccessstate(scheduleAppointmentmodel));
+    }).catchError((error) {
+      print(error.toString());
+      emit(appscheduleERRORstate(error.toString()));
     });
   }
 
@@ -237,11 +322,12 @@ class appcubit extends Cubit<appstate> {
       final userdata = Registermodel.fromJson(jsonDecode(value?.data));
 
       final apimodeluse = userdata.data.token.authToken;
-      StorageUtil.putString('token', apimodeluse);
-      var token = StorageUtil.putString('token', apimodeluse);
 
       if (apimodeluse != null) {
+        StorageUtil.clrString('token');
+        StorageUtil.putString('token', apimodeluse);
         print(apimodeluse);
+        var token = StorageUtil.putString('token', apimodeluse);
         Navigator.of(context).push(MaterialPageRoute(builder: (_) {
           return homeScreen();
         }));
@@ -254,12 +340,6 @@ class appcubit extends Cubit<appstate> {
       emit(appERRORstate(error.toString()));
     });
   }
-}
-
-class applogincubit extends Cubit<apploginstate> {
-  applogincubit(AppLoginInitialState initialState) : super(initialState);
-
-  static applogincubit get(Context) => BlocProvider.of(Context);
 
   Future<void> userlogin(
       {required String phone_number, required String password, context}) async {
@@ -271,9 +351,11 @@ class applogincubit extends Cubit<apploginstate> {
       print(value?.data);
       final userdata = Loginmodel.fromJson(jsonDecode(value?.data));
       final apimodeluse = userdata.data.token.authToken;
-      var token = StorageUtil.putString('token', apimodeluse);
 
       if (apimodeluse != null) {
+        StorageUtil.clrString('token');
+        StorageUtil.putString('token', apimodeluse);
+
         appcubit.get(context).getuserdata();
         Navigator.of(context).push(MaterialPageRoute(builder: (_) {
           return homeScreen();

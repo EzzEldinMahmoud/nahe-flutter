@@ -2,7 +2,6 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mapbox_search/mapbox_search.dart';
 import 'package:project/models/LOGIN_model.dart';
 import 'package:project/network/remote/diohelper.dart';
 import 'package:project/network/remote/local/cachehelper.dart';
@@ -45,8 +44,8 @@ class _signin_formState extends State<signin_form> {
 
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => applogincubit(AppLoginInitialState()),
-      child: BlocConsumer<applogincubit, apploginstate>(
+      create: (BuildContext context) => appcubit(AppLoginInitialState()),
+      child: BlocConsumer<appcubit, appstate>(
         listener: (context, state) {
           if (state is AppLoginSuccessState) {
             if (state.userdata.data.token.authToken != null) {
@@ -232,10 +231,10 @@ class _signin_formState extends State<signin_form> {
                                                   .size
                                                   .width *
                                               0.8,
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              applogincubit.get(Context).userlogin(
+                                              appcubit.get(Context).userlogin(
                                                   phone_number:
                                                       " ${PhoneNumber + phonenumberhere.text}",
                                                   password: password.text,

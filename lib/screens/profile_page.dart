@@ -8,8 +8,7 @@ import 'home_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:readmore/readmore.dart';
 
-//here is the onpressed function for profile page !
-
+/* 
 bool _show = false;
 final _gKey = new GlobalKey<ScaffoldState>();
 
@@ -108,7 +107,7 @@ void displayBottomSheet() {
                       const SizedBox(
                         height: 5,
                       ),
-                      //Display the data loaded from sample.json
+                      Display the data loaded from sample.json
 
                       Container(
                         height: MediaQuery.of(context).size.height * 0.4,
@@ -229,3 +228,4 @@ void displayBottomSheet() {
         ]));
   });
 }
+*/

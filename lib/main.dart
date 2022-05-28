@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_search/mapbox_search.dart';
-import 'package:project/models/API_model.dart';
+import 'package:project/models/LOGIN_model.dart';
 import 'package:project/models/user_info.dart';
 import 'package:project/network/remote/end_points.dart';
 import 'package:project/network/remote/local/cachehelper.dart';

@@ -174,17 +174,23 @@ class _localmapState extends State<localmap> {
             bottom: 225.0,
             left: 300.0,
             right: 0.0,
-            child: FloatingActionButton(
-              backgroundColor: const Color.fromRGBO(0, 168, 165, 1),
-              onPressed: () async {
-                getloc();
-                getloc2();
-              },
-              child: Container(
-                  child: Icon(Icons.gps_fixed_sharp),
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(0, 168, 165, 1),
-                  )),
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: FloatingActionButton(
+                /////// HERE
+
+                backgroundColor: const Color.fromRGBO(0, 168, 165, 1),
+                onPressed: () async {
+                  getloc();
+                  getloc2();
+                },
+                child: Container(
+                    child: Icon(Icons.gps_fixed_sharp),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(0, 168, 165, 1),
+                    )),
+              ),
             )),
         Positioned(
           bottom: 0.0,
